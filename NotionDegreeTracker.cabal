@@ -25,7 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Course
+      ParseCourse
   other-modules:
       Paths_NotionDegreeTracker
   autogen-modules:
