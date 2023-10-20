@@ -16,7 +16,7 @@ queryDatabaseURL = "https://api.notion.com/v1/databases/96d3fb824abe41b1a4d9b9cc
 
 getBearerToken :: IO B.ByteString
 getBearerToken = do
-  tokenHandle <- openFile "bearerToken.txt" ReadMode
+  tokenHandle <- openFile "./resources/bearerToken.txt" ReadMode
   contents <- B.hGetContents tokenHandle
   hClose tokenHandle
 
