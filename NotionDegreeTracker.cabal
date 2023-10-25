@@ -26,7 +26,9 @@ source-repository head
 library
   exposed-modules:
       Course
+      JSONDefinitions
       ParseCourse
+      Utility
   other-modules:
       Paths_NotionDegreeTracker
   autogen-modules:
@@ -39,6 +41,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , extra
     , lens
     , lens-aeson
     , text
@@ -61,6 +64,7 @@ executable NotionDegreeTracker-exe
     , base >=4.7 && <5
     , bytestring
     , containers
+    , extra
     , lens
     , lens-aeson
     , text
@@ -84,6 +88,7 @@ test-suite NotionDegreeTracker-test
     , base >=4.7 && <5
     , bytestring
     , containers
+    , extra
     , lens
     , lens-aeson
     , text

@@ -4,16 +4,15 @@ module Main (main) where
 
 import Control.Lens
 import Course
-import Data.Aeson
-import qualified Data.Aeson as A
 import qualified Data.ByteString as B
-import qualified Data.ByteString.Lazy as B.ByteString
 import Data.Maybe
 import qualified Data.Vector as V
 import Data.Word as W
+import JSONDefinitions
 import Network.Wreq
 import ParseCourse
 import System.IO
+import Utility
 
 queryDatabaseURL :: String
 queryDatabaseURL = "https://api.notion.com/v1/databases/96d3fb824abe41b1a4d9b9cc74341375/query"
@@ -48,18 +47,6 @@ getCourses bearerToken = do
 
   return $ rsp ^? responseBody & parseInput & fromMaybe V.empty
 
-setParagraphBody :: String -> B.ByteString.LazyByteString
-setParagraphBody newText =
-  encode $
-    object
-      [ "paragraph"
-          A..= object
-            [ "rich_text"
-                A..= [ object ["text" A..= object ["content" A..= newText]]
-                     ]
-            ]
-      ]
-
 setParagraph :: B.ByteString -> String -> IO ()
 setParagraph bearerToken newText = do
   let opts =
@@ -79,5 +66,5 @@ main = do
   bearerToken <- getBearerToken
   coursesList <- getCourses bearerToken
 
-  print coursesList
-  setParagraph bearerToken . show . sum . fmap (^. credits) $ coursesList
+  mapM_ print coursesList
+  setParagraph bearerToken . show . creditsPerSemester $ coursesList

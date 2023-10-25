@@ -5,6 +5,7 @@ module ParseCourse
   )
 where
 
+import Control.Arrow
 import Control.Lens
 import Course
 import Data.Aeson
@@ -28,13 +29,22 @@ creditsKey = key "properties" . key "Credits" . key "number" . _Integer
 prereqsKey :: (AsValue t) => Traversal' t (V.Vector Value)
 prereqsKey = key "properties" . key "Prereq" . key "relation" . _Array
 
-parseCourse :: (AsValue s) => s -> Maybe Course
+yearKey :: (AsValue t) => Traversal' t Year
+yearKey = key "properties" . key "Year" . key "select" . key "name" . _JSON
+
+semesterKey :: (AsValue t) => Traversal' t Semester
+semesterKey = key "properties" . key "Semester" . key "select" . key "name" . _JSON
+
+parseCourse :: (AsValue t) => t -> Maybe Course
 parseCourse courseJSON =
-  Course
-    <$> (courseJSON ^? idKey)
-    <*> (courseJSON ^? nameKey)
-    <*> (courseJSON ^? creditsKey)
-    <*> ((courseJSON ^? prereqsKey) >>= traverse (^? idKey))
+  ( emptyCourse
+      >>> set name (courseJSON ^? nameKey)
+      >>> set credits (courseJSON ^? creditsKey)
+      >>> set prereqs ((courseJSON ^? prereqsKey) >>= traverse (^? idKey))
+      >>> set year (courseJSON ^? yearKey)
+      >>> set semester (courseJSON ^? semesterKey)
+  )
+    <$> courseJSON ^? idKey
 
 parseCourses :: V.Vector Value -> V.Vector Course
 parseCourses = V.fromList . mapMaybe parseCourse . V.toList

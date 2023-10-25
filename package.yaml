@@ -29,7 +29,7 @@ dependencies:
 - wreq
 - aeson
 - lens-aeson
-
+- extra
 
 ghc-options:
 - -Wall
