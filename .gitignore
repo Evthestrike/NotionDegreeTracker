@@ -1,3 +1,4 @@
 .stack-work/
 *~
 resources/bearerToken.txt
+*.cabal
