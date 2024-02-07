@@ -20,6 +20,9 @@ queryDatabaseURL = "https://api.notion.com/v1/databases/96d3fb824abe41b1a4d9b9cc
 setParagraphURL :: String
 setParagraphURL = "https://api.notion.com/v1/blocks/3b1b5186-1778-4b65-83c4-17e8a3faa7bb"
 
+tableChildrenURL :: String
+tableChildrenURL = "https://api.notion.com/v1/blocks/2f995574-b764-4b47-b0b2-a37014505780/children"
+
 getBearerToken :: IO B.ByteString
 getBearerToken = do
   tokenHandle <- openFile "./resources/bearerToken.txt" ReadMode
@@ -61,10 +64,23 @@ setParagraph bearerToken newText = do
   _ <- patchWith opts setParagraphURL (setParagraphBody newText)
   return ()
 
+getTableChildren bearerToken = do
+  let opts =
+        defaults
+          & auth
+            ?~ oauth2Bearer bearerToken
+          & header "Notion-Version"
+            .~ ["2022-06-28"]
+
+  parseIDs . getWith opts $ tableChildrenURL
+
 main :: IO ()
 main = do
   bearerToken <- getBearerToken
   coursesList <- getCourses bearerToken
 
+  tableChildrenIDs <- getTableChildren
+
   mapM_ print coursesList
-  setParagraph bearerToken . show . creditsPerSemester $ coursesList
+
+  setParagraph bearerToken . showCredits . creditsPerSemester $ coursesList

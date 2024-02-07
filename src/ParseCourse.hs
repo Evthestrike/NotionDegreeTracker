@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module ParseCourse
-  ( parseInput,
+  ( parseCourseInput,
   )
 where
 
@@ -37,17 +37,20 @@ semesterKey = key "properties" . key "Semester" . key "select" . key "name" . _J
 
 parseCourse :: (AsValue t) => t -> Maybe Course
 parseCourse courseJSON =
-  ( emptyCourse
-      >>> set name (courseJSON ^? nameKey)
-      >>> set credits (courseJSON ^? creditsKey)
-      >>> set prereqs ((courseJSON ^? prereqsKey) >>= traverse (^? idKey))
-      >>> set year (courseJSON ^? yearKey)
-      >>> set semester (courseJSON ^? semesterKey)
+  ( \x ->
+      Course
+        { idTxt = x,
+          name = courseJSON ^? nameKey,
+          credits = courseJSON ^? creditsKey,
+          prereqs = (courseJSON ^? prereqsKey) >>= traverse (^? idKey),
+          year = courseJSON ^? yearKey,
+          semester = courseJSON ^? semesterKey
+        }
   )
     <$> courseJSON ^? idKey
 
 parseCourses :: V.Vector Value -> V.Vector Course
 parseCourses = V.fromList . mapMaybe parseCourse . V.toList
 
-parseInput :: (AsValue a) => Maybe a -> Maybe (V.Vector Course)
-parseInput inputJSON = (inputJSON >>= (^? coursesKey)) <&> parseCourses
+parseCourseInput :: (AsValue a) => Maybe a -> Maybe (V.Vector Course)
+parseCourseInput inputJSON = (inputJSON >>= (^? coursesKey)) <&> parseCourses

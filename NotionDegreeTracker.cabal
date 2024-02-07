@@ -28,6 +28,7 @@ library
       Course
       JSONDefinitions
       ParseCourse
+      ParseTableInput
       Utility
   other-modules:
       Paths_NotionDegreeTracker
