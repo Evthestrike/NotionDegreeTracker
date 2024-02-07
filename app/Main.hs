@@ -74,6 +74,8 @@ getTableChildren bearerToken = do
 
   parseIDs . getWith opts $ tableChildrenURL
 
+-- | Send data to the Notion API to change a paragraph to include the credits
+-- per semester calculated from the degree plan in Notion
 main :: IO ()
 main = do
   bearerToken <- getBearerToken
